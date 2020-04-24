@@ -3,6 +3,7 @@ package com.centime.greeting.external;
 import com.centime.greeting.configuration.GreetingConfiguration;
 import com.centime.util.exception.CustomRuntimeException;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -42,22 +43,18 @@ public class RestApiManager {
         return null;
     }
 
-    public <T> T post(String baseUrl, String url, String query, Object body,
+    public <T> T post(String baseUrl, String url, String query, JsonObject body,
                       HttpHeaders requestHeaders, Class<T> responseClassType, int connectTimeout, int readTimeout) {
         ResponseEntity<T> responseEntity = null;
         try {
             String fullUrl = getFullUrl(baseUrl, url, query);
-            String bodyJson = null;
-            if (body != null) {
-                bodyJson = toJson(body);
-            }
-            HttpEntity<Object> requestEntity = new HttpEntity<>(bodyJson, requestHeaders);
+            HttpEntity<Object> requestEntity = new HttpEntity<>(body.toString(), requestHeaders);
 
             RestTemplate restTemplate = appConfiguration.restTemplate();
             HttpComponentsClientHttpRequestFactory rf = (HttpComponentsClientHttpRequestFactory) restTemplate.getRequestFactory();
             rf.setReadTimeout(readTimeout);
             log.info("The URL called : {} and readTimeout sent : {}", fullUrl, readTimeout);
-            
+
             responseEntity =
                     restTemplate.exchange(fullUrl, HttpMethod.POST, requestEntity, responseClassType);
             if (responseEntity.getStatusCode() == HttpStatus.OK) {

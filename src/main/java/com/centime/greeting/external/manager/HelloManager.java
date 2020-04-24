@@ -5,14 +5,16 @@ import com.centime.util.exception.CustomRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import static com.centime.greeting.util.RestHeadersGeneration.getRequestHeaders;
 
+@Component
 public class HelloManager extends RestApiManager {
     private static final Logger logger = LoggerFactory.getLogger(HelloManager.class);
     private final static String HELLO_URL = "/hello";
 
-    @Value("${external.hello.base.url:localhost:10002}")
+    @Value("${external.hello.base.url}")
     private String baseHelloeUrl;
 
     @Value("${external.hello.base.timeout:3000}")

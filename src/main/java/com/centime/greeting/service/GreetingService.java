@@ -19,7 +19,7 @@ public class GreetingService {
 
         String helloResponse = helloManager.getHello(accessToken, logId);
         String concatenateResponse = concatenationManager.concatenate(greetingRequest, accessToken, logId);
-        return String.format("{} {}", helloResponse, concatenateResponse);
+        return String.format("%s %s", helloResponse, concatenateResponse);
     }
 
 }
