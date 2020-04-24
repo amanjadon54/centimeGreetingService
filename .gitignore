@@ -1,0 +1,14 @@
+
+target/classes
+/bin/
+.DS_Store
+.settings/
+logs/
+*.csv
+/target/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
