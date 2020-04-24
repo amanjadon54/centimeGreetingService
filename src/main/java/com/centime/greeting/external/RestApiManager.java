@@ -23,7 +23,7 @@ public class RestApiManager {
     private static final Logger log = LoggerFactory.getLogger(RestApiManager.class);
 
     public <T> T get(String baseUrl, String url, String query, HttpHeaders requestHeaders,
-                     Class<T> responseClassType, int readTimeout) {
+                     Class<T> responseClassType, int readTimeout, String logId) {
         ResponseEntity<T> responseEntity = null;
         try {
             String fullUrl = getFullUrl(baseUrl, url, query);
@@ -38,13 +38,17 @@ public class RestApiManager {
             }
         } catch (Exception e) {
             log.error("Error in RestApiManager:get : {} ; Exception : {}", responseEntity, e);
-            throw new CustomRuntimeException();
+            if (responseEntity != null) {
+                throw new CustomRuntimeException(e.getMessage(), Integer.parseInt(responseEntity.getStatusCode().toString()), "post service:concatenation failing" + logId, null);
+            } else {
+                throw new CustomRuntimeException(e.getMessage(), 500, "post service:concatenation failing " + logId, null);
+            }
         }
         return null;
     }
 
     public <T> T post(String baseUrl, String url, String query, JsonObject body,
-                      HttpHeaders requestHeaders, Class<T> responseClassType, int connectTimeout, int readTimeout) {
+                      HttpHeaders requestHeaders, Class<T> responseClassType, int connectTimeout, int readTimeout, String logId) {
         ResponseEntity<T> responseEntity = null;
         try {
             String fullUrl = getFullUrl(baseUrl, url, query);
@@ -62,6 +66,11 @@ public class RestApiManager {
             }
         } catch (Exception e) {
             log.error("Error in RestApiManager:post : {} ; Exception : {}", responseEntity, e);
+            if (responseEntity != null) {
+                throw new CustomRuntimeException(e.getMessage(), Integer.parseInt(responseEntity.getStatusCode().toString()), "post service:concatenation failing " + logId, null);
+            } else {
+                throw new CustomRuntimeException(e.getMessage(), 500, "post service:concatenation failing " + logId, null);
+            }
         }
         return null;
     }

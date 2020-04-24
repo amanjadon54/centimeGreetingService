@@ -2,6 +2,7 @@ package com.centime.greeting.configuration;
 
 import com.centime.util.aspect.LoggerAspect;
 import com.centime.util.interceptor.AuthenticationRequestInterceptor;
+import com.google.common.base.Predicate;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -16,10 +17,19 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.List;
 
+import static com.google.common.base.Predicates.or;
+import static springfox.documentation.builders.PathSelectors.regex;
+
 @Configuration
+@EnableSwagger2
 public class GreetingConfiguration extends WebMvcConfigurerAdapter {
 
     @Value("${httpClientFactory.connection.timeout:5000}")
@@ -43,7 +53,7 @@ public class GreetingConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authenticationRequestInterceptor()).addPathPatterns("/hello");
+        registry.addInterceptor(authenticationRequestInterceptor()).addPathPatterns("/greeting");
     }
 
     @Scope("prototype")
@@ -51,6 +61,24 @@ public class GreetingConfiguration extends WebMvcConfigurerAdapter {
     public RestTemplate restTemplate() {
         return restTemplate(Integer.parseInt(connectionTimeOut), Integer.parseInt(readTimeOut),
                 Integer.parseInt(poolMaxTotal));
+    }
+
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.centime.greeting.controller"))
+//                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build();
+    }
+    //http://localhost:10001/v2/api-docs
+    //http://localhost:10001/swagger-ui.html
+
+    private Predicate<String> postPaths() {
+        return or(regex("/greeting"),
+                regex("/health")
+        );
     }
 
     private RestTemplate restTemplate(int connectionTimeout, int readTimeout, int maxConnections) {
@@ -63,7 +91,7 @@ public class GreetingConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private ClientHttpRequestFactory httpRequestFactory(int connectionTimeout, int readTimeout,
-                                                       int maxConnections) {
+                                                        int maxConnections) {
         HttpComponentsClientHttpRequestFactory factory =
                 new HttpComponentsClientHttpRequestFactory(httpClient(maxConnections));
         factory.setConnectTimeout(connectionTimeout);
