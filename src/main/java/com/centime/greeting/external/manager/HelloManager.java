@@ -22,7 +22,7 @@ public class HelloManager extends RestApiManager {
 
     public String getHello(String accessToken, String logId) throws CustomRuntimeException {
         logger.info("performing Hello service:hello with logId {}", logId);
-        String concatenteResponse = super.get(baseHelloeUrl, HELLO_URL, null, getRequestHeaders(accessToken),
+        String concatenteResponse = super.get(baseHelloeUrl, HELLO_URL, null, getRequestHeaders(accessToken, logId),
                 String.class, helloTimeout);
         if (concatenteResponse == null) {
             logger.error("No response received in Hello service:hello with logId {}", logId);

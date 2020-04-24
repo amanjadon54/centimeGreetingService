@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
+import static com.centime.util.constants.StringConstants.ACCESS_TOKEN;
+
 @RestController
 public class GreetingController {
 
@@ -22,6 +24,6 @@ public class GreetingController {
     @PostMapping("/greeting")
     public Object greeting(@RequestHeader Map<String, String> headers, String logId,
                            @Valid @RequestBody GreetingRequest greetingRequest) {
-        return greetingService.greet(greetingRequest, headers.get("access-token"), logId);
+        return greetingService.greet(greetingRequest, headers.get(ACCESS_TOKEN), logId);
     }
 }

@@ -36,7 +36,7 @@ public class ConcatenationManager extends RestApiManager {
             concatenateEntity.addProperty("Name", greetingRequest.getName());
             concatenateEntity.addProperty("Sirname", greetingRequest.getSirName());
 
-            concatenteResponse = super.post(baseConcatenateUrl, CONCATENATE_URL, null, concatenateEntity, getRequestHeaders(accessToken),
+            concatenteResponse = super.post(baseConcatenateUrl, CONCATENATE_URL, null, concatenateEntity, getRequestHeaders(accessToken, logId),
                     String.class, 10, concatenteTimeout);
             if (concatenteResponse == null) {
                 logger.error("No response received in Concatenate service:concatenate with logId {}", logId);
