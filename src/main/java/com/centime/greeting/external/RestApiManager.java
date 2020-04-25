@@ -39,9 +39,9 @@ public class RestApiManager {
         } catch (Exception e) {
             log.error("Error in RestApiManager:get : {} ; Exception : {}", responseEntity, e);
             if (responseEntity != null) {
-                throw new CustomRuntimeException(e.getMessage(), Integer.parseInt(responseEntity.getStatusCode().toString()), "post service:concatenation failing" + logId, null);
+                throw new CustomRuntimeException(e.getMessage(), Integer.parseInt(responseEntity.getStatusCode().toString()), "Get service:concatenation failing" + logId, null);
             } else {
-                throw new CustomRuntimeException(e.getMessage(), 500, "post service:concatenation failing " + logId, null);
+                throw new CustomRuntimeException(e.getMessage(), 500, "Get service:concatenation failing " + logId, null);
             }
         }
         return null;
