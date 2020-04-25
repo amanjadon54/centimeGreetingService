@@ -17,14 +17,19 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
+import springfox.documentation.service.Parameter;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.centime.util.constants.StringConstants.ACCESS_TOKEN;
 import static com.google.common.base.Predicates.or;
 import static springfox.documentation.builders.PathSelectors.regex;
 
@@ -65,12 +70,23 @@ public class GreetingConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public Docket api() {
+        ParameterBuilder authParameterBuilder = new ParameterBuilder();
+        authParameterBuilder.name(ACCESS_TOKEN)                 // name of header
+                .modelRef(new ModelRef("string"))
+                .parameterType("header")               // type - header
+                .defaultValue("static token")        // based64 of - zone:mypassword
+                .required(true)                // for compulsory
+                .build();
+        java.util.List<Parameter> aParameters = new ArrayList<>();
+        aParameters.add(authParameterBuilder.build());             // add parameter
+
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.centime.greeting.controller"))
 //                .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
-                .build();
+                .build()
+                .globalOperationParameters(aParameters);
     }
     //http://localhost:10001/v2/api-docs
     //http://localhost:10001/swagger-ui.html
